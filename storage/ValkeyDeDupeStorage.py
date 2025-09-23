@@ -1,7 +1,7 @@
 # storage/ValkeyDedupeStorage.py
 from typing import Optional
 import valkey  # pip install valkey
-import os
+from config.Config import VALKEY_HOST, VALKEY_PORT
 
 
 class ValkeyDedupeStorage:
@@ -17,8 +17,8 @@ class ValkeyDedupeStorage:
         db: int = 0,
         ttl_seconds: Optional[int] = 7 * 24 * 3600,  # default: 7 days
     ):
-        host = host or os.getenv("VALKEY_HOST", "localhost")
-        port = port or int(os.getenv("VALKEY_PORT", "6379"))
+        host = VALKEY_HOST
+        port = VALKEY_PORT
 
         self._client = valkey.Valkey(host=host, port=port, db=db)
         self._ttl = ttl_seconds
