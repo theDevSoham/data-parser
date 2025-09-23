@@ -26,7 +26,6 @@ class ParserService:
         skipped = 0
         for post in normalized_posts:
             key = post.canonical_hash
-            print("Haha: ", key)
             ok = self._dedupe.claim(key)
             if not ok:
                 skipped += 1
