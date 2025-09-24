@@ -1,7 +1,7 @@
 # storage/ValkeyDedupeStorage.py
 from typing import Optional
 import valkey  # pip install valkey
-from config.Config import VALKEY_HOST, VALKEY_PORT
+from config.Config import VALKEY_URL
 
 
 class ValkeyDedupeStorage:
@@ -12,17 +12,13 @@ class ValkeyDedupeStorage:
 
     def __init__(
         self,
-        host: str = None,
-        port: int = None,
         db: int = 0,
         ttl_seconds: Optional[int] = 7 * 24 * 3600,  # default: 7 days
     ):
-        host = VALKEY_HOST
-        port = VALKEY_PORT
+        connection_url = VALKEY_URL
 
-        self._client = valkey.Valkey(host=host, port=port, db=db)
+        self._client = valkey.from_url(connection_url, db=db, decode_responses=True)
         self._ttl = ttl_seconds
-        self._client.flushall()
 
     def claim(self, canonical_hash: str) -> bool:
         """
