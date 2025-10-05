@@ -165,6 +165,7 @@ def parse_and_push(req: ParseAndPushRequest):
         inserted, skipped = parser_service.process_raw(platform, payload_dict)
         return {"platform": platform, "inserted": inserted, "skipped": skipped}
     except Exception as e:
+        print(f'Error: {str(e)}')
         raise HTTPException(status_code=500, detail=str(e))
 
 # def main():

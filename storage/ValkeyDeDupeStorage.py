@@ -2,6 +2,7 @@
 from typing import Optional
 import valkey  # pip install valkey
 from config.Config import VALKEY_URL
+import certifi
 
 
 class ValkeyDedupeStorage:
@@ -17,7 +18,12 @@ class ValkeyDedupeStorage:
     ):
         connection_url = VALKEY_URL
 
-        self._client = valkey.from_url(connection_url, db=db, decode_responses=True)
+        self._client = valkey.from_url(
+            connection_url, 
+            db=db, 
+            decode_responses=True,
+            ssl_ca_certs=certifi.where()
+        )
         self._ttl = ttl_seconds
 
     def claim(self, canonical_hash: str) -> bool:
