@@ -128,6 +128,7 @@ class FacebookPayload(BaseModel):
 class ParseAndPushRequest(BaseModel):
     platform: str = Field(..., description="Platform name: twitter or facebook")
     payload: Dict[str, Any]
+    token: str
 
     @field_validator("platform")
     def check_platform(cls, v):
@@ -151,6 +152,7 @@ parser_service = ParserService.ParserService(storage, dedupe)
 def parse_and_push(req: ParseAndPushRequest):
     platform = req.platform
     payload_dict = req.payload
+    token = req.token
 
     # Validate payload based on platform
     try:
@@ -162,23 +164,8 @@ def parse_and_push(req: ParseAndPushRequest):
         raise HTTPException(status_code=422, detail=f"Invalid payload for {platform}: {e}")
 
     try:
-        inserted, skipped = parser_service.process_raw(platform, payload_dict)
+        inserted, skipped = parser_service.process_raw(provider=platform, raw_payload=payload_dict, app_token=token)
         return {"platform": platform, "inserted": inserted, "skipped": skipped}
     except Exception as e:
         print(f'Error: {str(e)}')
         raise HTTPException(status_code=500, detail=str(e))
-
-# def main():
-#     # run demo 
-#     storage = MongoStorage() 
-#     dedupe = ValkeyDedupeStorage() 
-#     service = ParserService.ParserService(storage, dedupe)
-    
-#     ins_t, skip_t = service.process_raw("twitter", twitter_sample) 
-#     ins_f, skip_f = service.process_raw("facebook", facebook_sample)
-
-#     print(f"Twitter inserted={ins_t} skipped={skip_t}") 
-#     print(f"Facebook inserted={ins_f} skipped={skip_f}")
-
-# if __name__ == "__main__":
-#     main()

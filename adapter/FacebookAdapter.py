@@ -10,7 +10,7 @@ from .BaseAdapter import BaseAdapter
 
 class FacebookAdapter(BaseAdapter):
     version = "facebook_v1"
-    def parse(self, raw: Dict[str, Any]) -> List[NormalizedPost]:
+    def parse(self, raw: Dict[str, Any], users_data: Dict[str, Any]) -> List[NormalizedPost]:
         out: List[NormalizedPost] = []
         data = raw.get("data", [])
         fetched_at = datetime.now(timezone.utc).isoformat()
@@ -35,7 +35,7 @@ class FacebookAdapter(BaseAdapter):
             metrics["comments"] = comments_summary.get("total_count", 0)
             metrics["shares"] = item.get("shares", {}).get("count", 0) if item.get("shares") else 0
             # build author if present in raw (facebook often includes 'from' on comment objects; posts may not have easily)
-            author = Author(id=None, username=None, name=None, profile_url=None, raw={})
+            author = Author(id=users_data["sub"], username=users_data["email"], name=users_data["name"], profile_url=None, raw=users_data)
             canonical_hash = compute_canonical_hash("facebook", post_id, text, asdict(author))
             np = NormalizedPost(
                 _id=str(uuid.uuid4()),

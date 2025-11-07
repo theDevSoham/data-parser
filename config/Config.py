@@ -6,3 +6,4 @@ load_dotenv()  # Loads variables from .env into environment
 
 DATABASE_URI = os.getenv("DATABASE_URI", "")
 VALKEY_URL = os.getenv("VALKEY_URL", "")
+SOCIAL_AUTHENTICATOR_URL = os.getenv("SOCIAL_AUTHENTICATOR_URL", "")
