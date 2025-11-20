@@ -148,6 +148,10 @@ storage = MongoStorage()
 dedupe = ValkeyDedupeStorage()
 parser_service = ParserService.ParserService(storage, dedupe)
 
+@app.get("/health")
+def health_check():
+    return {"status": "success", "message": "service running"}
+
 @app.post("/parse-and-push")
 def parse_and_push(req: ParseAndPushRequest):
     platform = req.platform
